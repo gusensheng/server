@@ -24,6 +24,7 @@
 namespace OC\Core\Controller;
 
 use OC\Authentication\TwoFactorAuth\Manager;
+use OC\User\Session;
 use OC_User;
 use OC_Util;
 use OCP\AppFramework\Controller;
@@ -32,14 +33,14 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IRequest;
 use OCP\ISession;
 use OCP\IURLGenerator;
-use OCP\IUserSession;
+use OCP\IUserSession as UserSession;
 
 class TwoFactorChallengeController extends Controller {
 
 	/** @var Manager */
 	private $twoFactorManager;
 
-	/** @var IUserSession */
+	/** @var UserSession */
 	private $userSession;
 
 	/** @var ISession */
@@ -53,10 +54,10 @@ class TwoFactorChallengeController extends Controller {
 	 * @param IRequest $request
 	 * @param Manager $twoFactorManager
 	 * @param IUserSession $userSession
-	 * @param ISession $session
+	 * @param UserSession $session
 	 * @param IURLGenerator $urlGenerator
 	 */
-	public function __construct($appName, IRequest $request, Manager $twoFactorManager, IUserSession $userSession,
+	public function __construct($appName, IRequest $request, Manager $twoFactorManager, UserSession $userSession,
 		ISession $session, IURLGenerator $urlGenerator) {
 		parent::__construct($appName, $request);
 		$this->twoFactorManager = $twoFactorManager;
