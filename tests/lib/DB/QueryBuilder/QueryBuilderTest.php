@@ -25,7 +25,9 @@ use Doctrine\DBAL\Query\Expression\CompositeExpression;
 use OC\DB\QueryBuilder\Literal;
 use OC\DB\QueryBuilder\Parameter;
 use OC\DB\QueryBuilder\QueryBuilder;
+use OC\SystemConfig;
 use OCP\IDBConnection;
+use OCP\ILogger;
 
 /**
  * Class QueryBuilderTest
@@ -41,11 +43,19 @@ class QueryBuilderTest extends \Test\TestCase {
 	/** @var IDBConnection */
 	protected $connection;
 
+	/** @var SystemConfig|\PHPUnit_Framework_MockObject_MockObject */
+	protected $config;
+
+	/** @var ILogger|\PHPUnit_Framework_MockObject_MockObject */
+	protected $logger;
+
 	protected function setUp() {
 		parent::setUp();
 
 		$this->connection = \OC::$server->getDatabaseConnection();
-		$this->queryBuilder = new QueryBuilder($this->connection);
+		$this->config = $this->createMock(SystemConfig::class);
+		$this->logger = $this->createMock(ILogger::class);
+		$this->queryBuilder = new QueryBuilder($this->connection, $this->config, $this->logger);
 	}
 
 	protected function createTestingRows($appId = 'testFirstResult') {
@@ -166,7 +176,7 @@ class QueryBuilderTest extends \Test\TestCase {
 	}
 
 	public function dataSelect() {
-		$queryBuilder = new QueryBuilder(\OC::$server->getDatabaseConnection());
+		$queryBuilder = new QueryBuilder(\OC::$server->getDatabaseConnection(), $this->config, $this->logger);
 		return [
 			// select('column1')
 			[['configvalue'], ['configvalue' => '99']],
@@ -232,7 +242,7 @@ class QueryBuilderTest extends \Test\TestCase {
 	}
 
 	public function dataSelectAlias() {
-		$queryBuilder = new QueryBuilder(\OC::$server->getDatabaseConnection());
+		$queryBuilder = new QueryBuilder(\OC::$server->getDatabaseConnection(), $this->config, $this->logger);
 		return [
 			['configvalue', 'cv', ['cv' => '99']],
 			[$queryBuilder->expr()->literal('column1'), 'thing', ['thing' => 'column1']],
@@ -301,7 +311,7 @@ class QueryBuilderTest extends \Test\TestCase {
 	}
 
 	public function dataAddSelect() {
-		$queryBuilder = new QueryBuilder(\OC::$server->getDatabaseConnection());
+		$queryBuilder = new QueryBuilder(\OC::$server->getDatabaseConnection(), $this->config, $this->logger);
 		return [
 			// addSelect('column1')
 			[['configvalue'], ['appid' => 'testFirstResult', 'configvalue' => '99']],
